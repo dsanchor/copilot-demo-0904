@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demoaks
+  labels:
+    app: demoaks
+  namespace: namespace-workflow-1712752603237
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demoaks
+  template:
+    metadata:
+      labels:
+        app: demoaks
+    spec:
+      containers:
+        - name: demoaks
+          image: acrworkflow1712752603237.azurecr.io/image-workflow-1712752603237:latest
+          ports:
+            - containerPort: 8080
