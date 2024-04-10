@@ -1,14 +1,12 @@
-# Usar la imagen base de OpenJDK 17 alpine
-FROM openjdk:17-alpine
+FROM maven:3-eclipse-temurin-17 as BUILD
 
-# Opcional: establecer el directorio de trabajo
-WORKDIR /app
+COPY . /usr/src/app
+RUN mvn --batch-mode -f /usr/src/app/pom.xml clean package
 
-# Copiar el archivo .jar de tu aplicación al contenedor
-COPY ./target/*.jar /app/app.jar
-
-# exponer pùerto
+FROM eclipse-temurin:17-jre
+ENV PORT 8080
 EXPOSE 8080
+COPY --from=BUILD /usr/src/app/target /opt/target
+WORKDIR /opt/target
 
-# Comando para ejecutar tu aplicación
-CMD ["java", "-jar", "/app/app.jar"]
+CMD ["/bin/bash", "-c", "find -type f -name '*-SNAPSHOT.jar' | xargs java -jar"]
